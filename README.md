@@ -29,7 +29,9 @@ sns:
 
 Creating topics are easy with awscli, just run:
 
-`$ docker exec <CONTAINER_ID> bash -c "AWS_ACCESS_KEY_ID=fake AWS_SECRET_ACCESS_KEY=fake AWS_DEFAULT_REGION=fake aws --endpoint-url http://localhost:9292 sns create-topic --output text --name <TOPIC_NAME>"`
+```sh
+$ docker exec <CONTAINER_ID> bash -c "AWS_ACCESS_KEY_ID=fake AWS_SECRET_ACCESS_KEY=fake AWS_DEFAULT_REGION=fake aws --endpoint-url http://localhost:9292 sns create-topic --output text --name <TOPIC_NAME>"
+```
 
 The following ruby code can be used to verify that the container is running properly
 
