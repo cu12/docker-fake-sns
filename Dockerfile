@@ -1,24 +1,42 @@
-FROM gliderlabs/alpine:3.3
+FROM gliderlabs/alpine:latest
 
-# add neccessary packages
-RUN apk --update --no-cache add \
-    ruby \
-    ruby-bundler \
-    groff \
-    less \
-    python \
-    py-pip
+ENV PACKAGES build-base git libcrypto1.0 py-pip python ruby ruby-bundler ruby-dev ruby-json ruby-libs ruby-io-console ruby-bigdecimal
+ENV PACKAGES_CLEANUP build-base git py-pip py-setuptools
+
+ENV GEM_HOME /usr/local/bundle
+ENV BUNDLE_PATH="$GEM_HOME" \
+  BUNDLE_BIN="$GEM_HOME/bin" \
+  BUNDLE_SILENCE_ROOT_WARNING=1 \
+  BUNDLE_APP_CONFIG="$GEM_HOME"
+ENV PATH $BUNDLE_BIN:$PATH
+RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
+  && chmod 755 "$GEM_HOME" "$BUNDLE_BIN"
+
+# install neccessary packages
+RUN apk --update --no-cache add ${PACKAGES}
 
 # install awscli
 RUN pip install awscli
 
-# cleanup
-RUN apk --purge -v del py-pip
+COPY Gemfile /
 
-COPY Gemfile /Gemfile
+# Skip installing gem documentation
+RUN echo 'gem: --no-rdoc --no-ri' >> "${HOME}/.gemrc"
 
 # build fakesns
 RUN bundle install
+
+# cleanup
+RUN apk --purge -v del ${PACKAGES_CLEANUP} && \
+    rm -vfr /usr/share/ri && \
+    rm /var/cache/apk/*
+
+RUN mkdir -p /messages/sns && \
+    chown -R nobody:nobody /messages/sns/
+
+USER nobody
+
+VOLUME /messages/sns
 
 EXPOSE 9292
 
