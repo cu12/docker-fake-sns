@@ -1,18 +1,26 @@
-FROM ruby:2.2
+FROM gliderlabs/alpine:3.3
 
-RUN apt-get update
-RUN apt-get install -y \
-    awscli
+# add neccessary packages
+RUN apk --update --no-cache add \
+    ruby \
+    ruby-bundler \
+    groff \
+    less \
+    python \
+    py-pip
+
+# install awscli
+RUN pip install awscli
+
+# cleanup
+RUN apk --purge -v del && \
+    py-pip
 
 COPY Gemfile /Gemfile
+
+# build fakesns
 RUN bundle install
 
-RUN useradd -u 1000 -M docker \
-  && mkdir -p /messages/sns \
-  && chown docker /messages/sns
-USER docker
-
-VOLUME /messages/sns
 EXPOSE 9292
 
 # Note: We use thin, because webrick attempts to do a reverse dns lookup on every request
