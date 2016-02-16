@@ -13,8 +13,7 @@ RUN apk --update --no-cache add \
 RUN pip install awscli
 
 # cleanup
-RUN apk --purge -v del && \
-    py-pip
+RUN apk --purge -v del py-pip
 
 COPY Gemfile /Gemfile
 
