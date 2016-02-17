@@ -5,17 +5,17 @@ ENV PACKAGES_CLEANUP build-base git py-pip py-setuptools
 
 ENV GEM_HOME /usr/local/bundle
 ENV BUNDLE_PATH="$GEM_HOME" \
-  BUNDLE_BIN="$GEM_HOME/bin" \
-  BUNDLE_SILENCE_ROOT_WARNING=1 \
-  BUNDLE_APP_CONFIG="$GEM_HOME"
+    BUNDLE_BIN="$GEM_HOME/bin" \
+    BUNDLE_SILENCE_ROOT_WARNING=1 \
+    BUNDLE_APP_CONFIG="$GEM_HOME"
 ENV PATH $BUNDLE_BIN:$PATH
-RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
-  && chmod 755 "$GEM_HOME" "$BUNDLE_BIN"
+RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" && \
+    chmod 755 "$GEM_HOME" "$BUNDLE_BIN"
 
-# install neccessary packages
+# Install neccessary packages to build fake_sns
 RUN apk --update --no-cache add ${PACKAGES}
 
-# install awscli
+# Install awscli
 RUN pip install awscli
 
 COPY Gemfile /
@@ -23,10 +23,10 @@ COPY Gemfile /
 # Skip installing gem documentation
 RUN echo 'gem: --no-rdoc --no-ri' >> "${HOME}/.gemrc"
 
-# build fakesns
+# Build fakesns
 RUN bundle install
 
-# cleanup
+# Cleanup
 RUN apk --purge -v del ${PACKAGES_CLEANUP} && \
     rm -vfr /usr/share/ri && \
     rm /var/cache/apk/*
