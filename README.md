@@ -2,7 +2,9 @@
 Docker image for the fake_sns gem. Currently uses a forked copy of the gem, as development has stagnated, and a bug, which is critical for dockerization, is still outstanding. See: [pull request](https://github.com/yourkarma/fake_sns/pull/5)
 
 * This is a fork of [feathj/fake-sns](https://hub.docker.com/r/feathj/fake-sns/) and includes awscli in the container to easily manipulate SNS topics from CLI.
-  The image is using Alpine linux, making its size around 90 MB instead of the original 278 MB.
+  The image is using Alpine linux (gliderlabs/alpine), making its size around 90 MB instead of the original 278 MB.
+
+* Also a notable difference, that it uses [Tini](https://github.com/krallin/tini), a minimalistic init system to handle signaling properly.
 
 ##### Features
 Works off of forked copy of original gem to allow proper dockerization
