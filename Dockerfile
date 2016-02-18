@@ -12,6 +12,13 @@ ENV PATH $BUNDLE_BIN:$PATH
 RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" && \
     chmod 755 "$GEM_HOME" "$BUNDLE_BIN"
 
+# Add Tini
+apk add --update --repository http://dl-1.alpinelinux.org/alpine/edge/community/ tini
+ENV TINI_VERSION v0.9.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+
 # Install neccessary packages to build fake_sns
 RUN apk --update --no-cache add ${PACKAGES}
 
