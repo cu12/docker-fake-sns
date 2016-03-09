@@ -9,29 +9,24 @@ ENV BUNDLE_PATH="$GEM_HOME" \
     BUNDLE_SILENCE_ROOT_WARNING=1 \
     BUNDLE_APP_CONFIG="$GEM_HOME"
 ENV PATH $BUNDLE_BIN:$PATH
-RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" && \
-    chmod 755 "$GEM_HOME" "$BUNDLE_BIN"
-
-# Install neccessary packages to build fake_sns
-RUN apk --update --repository http://dl-1.alpinelinux.org/alpine/edge/community/ --no-cache add ${PACKAGES}
-
-# Install awscli
-RUN pip install awscli
 
 COPY Gemfile /
 
-# Skip installing gem documentation
-RUN echo 'gem: --no-rdoc --no-ri' >> "${HOME}/.gemrc"
-
-# Build fakesns
-RUN bundle install
-
-# Cleanup
-RUN apk --purge -v del ${PACKAGES_CLEANUP} && \
+RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" && \
+    chmod 755 "$GEM_HOME" "$BUNDLE_BIN" && \
+    echo "http://dl-1.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    echo "http://dl-2.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    echo "http://dl-3.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    echo "http://dl-4.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    echo "http://dl-5.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    apk --update --no-cache add ${PACKAGES} && \
+    pip install awscli && \
+    echo 'gem: --no-rdoc --no-ri' >> "${HOME}/.gemrc" && \
+    bundle install && \
+    apk --purge -v del ${PACKAGES_CLEANUP} && \
     rm -vfr /usr/share/ri && \
-    rm /var/cache/apk/*
-
-RUN mkdir -p /messages/sns && \
+    rm /var/cache/apk/* && \
+    mkdir -p /messages/sns && \
     chown -R nobody:nobody /messages/sns/
 
 VOLUME /messages/sns
