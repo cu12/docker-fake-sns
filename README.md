@@ -1,3 +1,5 @@
+[![](https://badge.imagelayers.io/seayou/fake-sns:latest.svg)](https://imagelayers.io/?images=seayou/fake-sns:latest 'Get your own badge on imagelayers.io')
+
 ### Fake-SNS
 Docker image for the fake_sns gem. Currently uses a forked copy of the gem, as development has stagnated, and a bug, which is critical for dockerization, is still outstanding. See: [pull request](https://github.com/yourkarma/fake_sns/pull/5)
 
